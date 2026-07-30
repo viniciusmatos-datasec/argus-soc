@@ -12,17 +12,17 @@
 
 **Argus SOC** é um MSSP (Managed Security Service Provider) fictício especializado em monitoramento autônomo de infraestrutura híbrida. Este repositório simula, na prática, a construção desse SOC do zero para um cliente fictício — a **TechNova Varejo**, uma rede de varejo de médio porte com exigência contratual de conformidade com LGPD, ISO 27001 e NIST CSF.
 
-O projeto cobre a jornada completa de um SOC moderno: coleta e engenharia de dados, detecção de anomalias com Machine Learning, SIEM, dashboards executivos, infraestrutura multi-cloud, resposta automática a incidentes (SOAR), uma camada enxuta de IA generativa e governança, risco e conformidade (GRC) — tudo amarrado por um incidente fictício que atravessa o projeto do início ao fim.
+O projeto cobre a jornada completa de um SOC moderno: coleta e engenharia de dados, detecção de anomalias com Machine Learning, SIEM, dashboards executivos, infraestrutura multi-cloud, resposta automática a incidentes (SOAR), persistência estruturada em banco relacional, uma camada enxuta de IA generativa e governança, risco e conformidade (GRC) — tudo amarrado por um incidente fictício que atravessa o projeto do início ao fim.
 
 ### O caso: Operação Sombra Silenciosa
 
-Um padrão de tentativas repetidas de login na VPN da TechNova é detectado, investigado, classificado como ameaça real por um modelo de Machine Learning, correlacionado no SIEM, neutralizado automaticamente por um playbook SOAR, e documentado como estudo de caso no relatório de conformidade. Esse incidente serve de fio condutor para todas as fases do projeto.
+Um padrão de tentativas repetidas de login na VPN da TechNova é detectado, investigado, classificado como ameaça real por um modelo de Machine Learning, correlacionado no SIEM, registrado em banco de dados, neutralizado automaticamente por um playbook SOAR, e documentado como estudo de caso no relatório de conformidade. Esse incidente serve de fio condutor para todas as fases do projeto.
 
 ## 🎯 Objetivo
 
 Construir um portfólio técnico robusto que demonstre competência prática em:
 
-- Engenharia de dados (ETL, pipelines, versionamento)
+- Engenharia de dados (ETL, pipelines, versionamento, SQL)
 - Data Science aplicado a segurança (detecção de anomalias, dashboards)
 - Infraestrutura como código e multi-cloud
 - Segurança ofensiva/defensiva aplicada (SIEM, SOAR)
@@ -48,7 +48,7 @@ ML Service (scikit-learn + SAS Viya)
 Detection Engine (SIEM — ELK Stack)
         │
         ▼
-   SOAR (TheHive + Shuffle)
+   SOAR (TheHive + Shuffle) ──► PostgreSQL (incidents, alerts)
         │
         ▼
    LLM Analyst (resumo + recomendação)
@@ -70,7 +70,7 @@ Em vez de depender que todas as tecnologias estejam prontas ao mesmo tempo, o pr
 |---|---|---|
 | **v1 — MVP** | ETL + Wazuh + ML básico + Dashboard simples | Fase 1 (S1-4) |
 | **v2 — Infraestrutura** | ELK Stack + Terraform + Docker + AWS/Azure | Fase 2 (S5-7) |
-| **v3 — Autonomia** | SOAR + GRC + Multi-Cloud | Fase 2 final + Fase 3 (S8-10) |
+| **v3 — Autonomia** | SOAR + PostgreSQL + GRC + Multi-Cloud | Fase 2 final + Fase 3 (S8-10) |
 | **v4 — Inteligência aumentada** | LLM enxuto + API + observabilidade leve + portfólio final | Fase 3 final (S11-12) |
 
 Detalhamento completo em [`docs/argus-soc-projeto.md`](docs/argus-soc-projeto.md).
@@ -89,8 +89,9 @@ O detalhamento semana a semana está em [`docs/roadmap.md`](docs/roadmap.md).
 
 | Categoria | Tecnologias |
 |---|---|
-| Linguagens | Python, DAX |
+| Linguagens | Python, SQL, DAX |
 | Dados | pandas, openpyxl, PySpark, Parquet, DVC |
+| Banco de dados | PostgreSQL (incidentes, alertas) |
 | Machine Learning | scikit-learn, SAS Viya |
 | SIEM / Segurança | Wazuh, Elastic Stack (Elasticsearch, Logstash, Kibana), TheHive, Shuffle SOAR |
 | Cloud / Infra | Terraform, AWS, Azure, GCP, Docker |
@@ -115,7 +116,7 @@ O detalhamento semana a semana está em [`docs/roadmap.md`](docs/roadmap.md).
 
 ```
 argus-soc/
-├── src/            # código-fonte (ETL, ML, playbooks, API)
+├── src/            # código-fonte (ETL, ML, playbooks, API, SQL)
 ├── tests/          # testes automatizados (pytest)
 ├── notebooks/      # notebooks Jupyter (ETL, análise de ML)
 ├── infra/          # Terraform (aws/, azure/, gcp/)
@@ -138,7 +139,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-> Instruções detalhadas de cada módulo (pipeline de dados, modelo de ML, infraestrutura, API) serão adicionadas conforme cada versão for implementada.
+> Instruções detalhadas de cada módulo (pipeline de dados, modelo de ML, infraestrutura, API, banco de dados) serão adicionadas conforme cada versão for implementada.
 
 ## 📋 Metodologia
 
@@ -150,7 +151,7 @@ Commits seguem o padrão [Conventional Commits](https://www.conventionalcommits.
 
 **Vinicius Matos** — estudante de Segurança da Informação (FATEC Santana de Parnaíba), em transição para Data Science.
 
-- [LinkedIn](https://www.linkedin.com/in/vinicius-matos-b50470426/)
+- [LinkedIn](#)
 - [GitHub](https://github.com/viniciusmatos-datasec)
 
 ---

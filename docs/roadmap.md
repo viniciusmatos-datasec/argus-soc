@@ -79,18 +79,23 @@ Detalhamento semana a semana do projeto, organizado por fase e mapeado às vers�
 - Diagrama de arquitetura multi-cloud e um ADR justificando as escolhas
 - **Entregável**: infra multi-cloud versionada, diagrama e ADR
 
-### Semana 9 — SOAR: resposta automática ao Sombra Silenciosa
+### Semana 9 — SOAR + PostgreSQL: resposta automática ao Sombra Silenciosa
 - TheHive + Shuffle/Cortex via Docker
 - SIEM conectado ao TheHive: anomalias críticas viram casos automaticamente
-- Playbook Python: severidade crítica → bloqueia IP, abre ticket, notifica Slack/e-mail
-- Log de auditoria imutável (append-only) para cada ação automática
-- **Entregável**: playbook funcionando, casos no TheHive, log de auditoria versionado
+- **Subir um container PostgreSQL via Docker (mesmo `docker-compose` do TheHive)**
+- **Criar o schema SQL: tabelas `incidents` (id, título, severidade, status, criado_em) e `alerts` (id, incident_id, origem, descrição, criado_em)**
+- Escrever playbook Python: quando severidade = crítica, bloquear o IP, abrir ticket no TheHive **e inserir o registro no PostgreSQL**
+- Integrar notificação automática por Slack ou e-mail quando o playbook é executado
+- Registrar cada ação automática em um log de auditoria imutável (append-only)
+- **Escrever queries SQL reais para consulta: incidentes por severidade, tempo médio entre alerta e resposta**
+- Escrever testes pytest simulando o disparo do playbook e validando as ações tomadas (incluindo a inserção no banco)
+- **Entregável**: playbook funcionando, casos no TheHive, schema PostgreSQL versionado em `src/db/migrations/`, queries SQL documentadas, log de auditoria versionado
 
 ### Semana 10 — GRC: o Sombra Silenciosa vira estudo de caso
 - Mapeamento contra ISO 27001 Anexo A e NIST CSF
 - Matriz de riscos no Excel (probabilidade x impacto)
 - Política de segurança e retenção de logs considerando a LGPD
-- Relatório GRC único documentando qual controle falhou no caso e o que foi corrigido
+- Relatório GRC único documentando qual controle falhou no caso e o que foi corrigido, usando as queries SQL da Semana 9 como evidência (tempo até detecção, histórico de incidentes)
 - **Entregável**: relatório GRC completo em `docs/grc/`
 
 ---
@@ -100,9 +105,9 @@ Detalhamento semana a semana do projeto, organizado por fase e mapeado às vers�
 **Papel simulado**: Analista de GRC / entrega final de portfólio
 
 ### Semana 11 — API, LLM Analyst, testes e CI/CD
-- API FastAPI enxuta: `GET /api/events`, `GET /api/incidents`, `GET /health`, autenticação via JWT
-- LLM Analyst: endpoint que recebe um caso do TheHive e retorna resumo + recomendação de ação
-- Segredos fora do Git (`.env` + `.gitignore`)
+- API FastAPI enxuta: `GET /api/events`, `GET /api/incidents` (lendo do PostgreSQL), `GET /health`, autenticação via JWT
+- LLM Analyst: endpoint que recebe um caso do TheHive/PostgreSQL e retorna resumo + recomendação de ação
+- Segredos fora do Git (`.env` + `.gitignore`), incluindo credenciais do PostgreSQL
 - Cobertura de testes revisada, linting (ruff) e formatação (black)
 - SAST com Bandit, logs estruturados em JSON
 - Pipeline CI/CD completo: lint → testes → SAST → build
