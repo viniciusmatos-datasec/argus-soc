@@ -150,7 +150,7 @@ Commits seguem o padrão [Conventional Commits](https://www.conventionalcommits.
 
 **Vinicius Matos** — estudante de Segurança da Informação (FATEC Santana de Parnaíba), em transição para Data Science.
 
-- [LinkedIn](#)
+- [LinkedIn](https://www.linkedin.com/in/vinicius-matos-b50470426/)
 - [GitHub](https://github.com/viniciusmatos-datasec)
 
 ---
