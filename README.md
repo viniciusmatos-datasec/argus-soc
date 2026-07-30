@@ -12,7 +12,7 @@
 
 **Argus SOC** é um MSSP (Managed Security Service Provider) fictício especializado em monitoramento autônomo de infraestrutura híbrida. Este repositório simula, na prática, a construção desse SOC do zero para um cliente fictício — a **TechNova Varejo**, uma rede de varejo de médio porte com exigência contratual de conformidade com LGPD, ISO 27001 e NIST CSF.
 
-O projeto cobre a jornada completa de um SOC moderno: coleta e engenharia de dados, detecção de anomalias com Machine Learning, SIEM, dashboards executivos, infraestrutura multi-cloud, resposta automática a incidentes (SOAR) e governança, risco e conformidade (GRC) — tudo amarrado por um incidente fictício que atravessa o projeto do início ao fim.
+O projeto cobre a jornada completa de um SOC moderno: coleta e engenharia de dados, detecção de anomalias com Machine Learning, SIEM, dashboards executivos, infraestrutura multi-cloud, resposta automática a incidentes (SOAR), uma camada enxuta de IA generativa e governança, risco e conformidade (GRC) — tudo amarrado por um incidente fictício que atravessa o projeto do início ao fim.
 
 ### O caso: Operação Sombra Silenciosa
 
@@ -20,50 +20,70 @@ Um padrão de tentativas repetidas de login na VPN da TechNova é detectado, inv
 
 ## 🎯 Objetivo
 
-Construir, em 12 semanas, um portfólio técnico robusto que demonstre competência prática em:
+Construir um portfólio técnico robusto que demonstre competência prática em:
 
 - Engenharia de dados (ETL, pipelines, versionamento)
 - Data Science aplicado a segurança (detecção de anomalias, dashboards)
 - Infraestrutura como código e multi-cloud
 - Segurança ofensiva/defensiva aplicada (SIEM, SOAR)
+- IA generativa aplicada a análise de incidentes
 - Governança, risco e conformidade (GRC)
 - Boas práticas de engenharia de software (testes, CI/CD, logs de auditoria)
-
-## 🗺️ Roadmap
-
-| Fase | Semanas | Foco | Papel simulado |
-|---|---|---|---|
-| **Fase 1 — Fundação** | 1-4 | Dados, infraestrutura e agilidade | Engenheiro de Dados e Plataforma |
-| **Fase 2 — Inteligência** | 5-8 | ML, SIEM, Cloud e Dashboards | Engenheiro de Detecção / Analista de SOC |
-| **Fase 3 — Autonomia** | 9-12 | SOAR, GRC e Portfólio | Líder de Resposta a Incidentes / Analista de GRC |
-
-O detalhamento semana a semana está documentado em [`docs/roadmap.md`](docs/roadmap.md).
 
 ## 🏗️ Arquitetura
 
 ```
-Coleta de Logs (Wazuh/Sysmon)
+Collectors (Wazuh/Sysmon)
         │
         ▼
-  Pipeline ETL (Python/pandas) ──► Excel / Parquet
+   Data Lake (DVC)
         │
         ▼
- Detecção de Anomalias (scikit-learn + SAS Viya)
+  Feature Store (DVC)
         │
         ▼
-    SIEM (ELK Stack na Azure)
+ML Service (scikit-learn + SAS Viya)
         │
         ▼
- Dashboard Executivo (Power BI + Databricks)
+Detection Engine (SIEM — ELK Stack)
         │
         ▼
-  SOAR — Resposta Automática (TheHive + Shuffle)
+   SOAR (TheHive + Shuffle)
         │
         ▼
-  GRC — Conformidade (ISO 27001 / NIST CSF / LGPD)
+   LLM Analyst (resumo + recomendação)
+        │
+        ▼
+Dashboard (Power BI + Databricks)
+        │
+        ▼
+     API (FastAPI) ──► Portal (GitHub Pages)
 ```
 
-Infraestrutura provisionada via Terraform em **AWS + Azure + GCP** (multi-cloud).
+Infraestrutura provisionada via Terraform em **AWS + Azure + GCP** (multi-cloud). A descrição completa de cada serviço e as decisões de arquitetura registradas (o que foi incluído e o que foi deixado de fora, e por quê) estão em [`docs/architecture.md`](docs/architecture.md).
+
+## 🧩 Versões evolutivas (v1 → v4)
+
+Em vez de depender que todas as tecnologias estejam prontas ao mesmo tempo, o projeto é entregue em versões — cada uma funcional e demonstrável por si só:
+
+| Versão | Foco | Fase |
+|---|---|---|
+| **v1 — MVP** | ETL + Wazuh + ML básico + Dashboard simples | Fase 1 (S1-4) |
+| **v2 — Infraestrutura** | ELK Stack + Terraform + Docker + AWS/Azure | Fase 2 (S5-7) |
+| **v3 — Autonomia** | SOAR + GRC + Multi-Cloud | Fase 2 final + Fase 3 (S8-10) |
+| **v4 — Inteligência aumentada** | LLM enxuto + API + observabilidade leve + portfólio final | Fase 3 final (S11-12) |
+
+Detalhamento completo em [`docs/argus-soc-projeto.md`](docs/argus-soc-projeto.md).
+
+## 🗺️ Roadmap semanal
+
+| Fase | Semanas | Papel simulado |
+|---|---|---|
+| **Fase 1 — Fundação** | 1-4 | Engenheiro de Dados e Plataforma |
+| **Fase 2 — Inteligência** | 5-8 | Engenheiro de Detecção / Analista de SOC |
+| **Fase 3 — Autonomia** | 9-12 | Líder de Resposta a Incidentes / Analista de GRC |
+
+O detalhamento semana a semana está em [`docs/roadmap.md`](docs/roadmap.md).
 
 ## 🛠️ Stack
 
@@ -75,21 +95,35 @@ Infraestrutura provisionada via Terraform em **AWS + Azure + GCP** (multi-cloud)
 | SIEM / Segurança | Wazuh, Elastic Stack (Elasticsearch, Logstash, Kibana), TheHive, Shuffle SOAR |
 | Cloud / Infra | Terraform, AWS, Azure, GCP, Docker |
 | BI / Dashboards | Power BI, Databricks |
+| API | FastAPI |
+| IA generativa | LLM Analyst (resumo/recomendação de incidentes) |
 | GRC | ISO 27001, NIST CSF, LGPD |
-| Qualidade | pytest, ruff, Bandit, GitHub Actions |
+| Qualidade | pytest, ruff, black, Bandit, GitHub Actions |
+| Versionamento | Git (código), DVC (dados e modelos) |
+
+## 📊 Critérios de qualidade
+
+| Métrica | Meta |
+|---|---|
+| Cobertura de testes (pytest) | > 90% |
+| Linting (ruff) | 0 erros |
+| SAST (Bandit) | 0 vulnerabilidades High |
+| Tempo de resposta da API | < 200 ms |
+| Taxa de falsos positivos | < 5% |
 
 ## 📂 Estrutura do repositório
 
 ```
 argus-soc/
-├── src/            # código-fonte (ETL, ML, playbooks)
+├── src/            # código-fonte (ETL, ML, playbooks, API)
 ├── tests/          # testes automatizados (pytest)
 ├── notebooks/      # notebooks Jupyter (ETL, análise de ML)
 ├── infra/          # Terraform (aws/, azure/, gcp/)
 ├── data/           # dados brutos e processados (versionados com DVC)
 ├── models/         # modelos de ML treinados (versionados com DVC)
-├── docs/           # roadmap, relatório GRC, ADRs
-└── README.md
+├── docs/           # roadmap, architecture.md, projeto.md, GRC, ADRs
+├── README.md
+└── CONTRIBUTING.md
 ```
 
 ## 🚀 Como rodar localmente
@@ -104,7 +138,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-> Instruções detalhadas de cada módulo (pipeline de dados, modelo de ML, infraestrutura) serão adicionadas conforme cada semana for implementada.
+> Instruções detalhadas de cada módulo (pipeline de dados, modelo de ML, infraestrutura, API) serão adicionadas conforme cada versão for implementada.
 
 ## 📋 Metodologia
 
